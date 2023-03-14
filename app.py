@@ -1,4 +1,10 @@
+# imports
+import pandas as pd
+import altair as alt
 from dash import dash, html
+
+# read in data
+drag = pd.read_csv('data/drag.csv')
 
 
 app = dash.Dash(__name__)
