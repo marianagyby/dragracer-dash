@@ -2,7 +2,7 @@
 
 This dashboard is hosted on `Render`, and can be found [here](https://dragracer-dashboard.onrender.com/).
 
-## Motivation
+## Purpose
 
 The dragracer-dash app is designed to help fans of RuPaul's Drag Race explore the backgrounds of drag queens on the show, across all seasons. The dragracer-dash app provides an easy-to-use interface for fans of RuPaul's Drag Race to explore data on the show's contestants and answer research questions such as the most common age and rarest astrological sign of the queens.
 
