@@ -7,12 +7,45 @@ from dash import dash, html, dcc, Input, Output
 # read in data
 drag = pd.read_csv('data/drag.csv')
 
+# Function to extract astrology signs
+def get_astrology_sign(dob):
+    day = dob.day
+    month = dob.month
 
+    if (month == 3 and day >= 21) or (month == 4 and day <= 19):
+        return "Aries"
+    elif (month == 4 and day >= 20) or (month == 5 and day <= 20):
+        return "Taurus"
+    elif (month == 5 and day >= 21) or (month == 6 and day <= 20):
+        return "Gemini"
+    elif (month == 6 and day >= 21) or (month == 7 and day <= 22):
+        return "Cancer"
+    elif (month == 7 and day >= 23) or (month == 8 and day <= 22):
+        return "Leo"
+    elif (month == 8 and day >= 23) or (month == 9 and day <= 22):
+        return "Virgo"
+    elif (month == 9 and day >= 23) or (month == 10 and day <= 22):
+        return "Libra"
+    elif (month == 10 and day >= 23) or (month == 11 and day <= 21):
+        return "Scorpio"
+    elif (month == 11 and day >= 22) or (month == 12 and day <= 21):
+        return "Sagittarius"
+    elif (month == 12 and day >= 22) or (month == 1 and day <= 19):
+        return "Capricorn"
+    elif (month == 1 and day >= 20) or (month == 2 and day <= 18):
+        return "Aquarius"
+    elif (month == 2 and day >= 19) or (month == 3 and day <= 20):
+        return "Pisces"
+    else:
+        return "Invalid date"
+
+
+# Start of app code
 app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
-# the style arguments for the sidebar. We use position:fixed and a fixed width
+# Style arguments for sidebar
 SIDEBAR_STYLE = {
     # "position": "fixed",
     "top": 0,
@@ -20,25 +53,26 @@ SIDEBAR_STYLE = {
     "bottom": 0,
     "width": "16rem",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
+    "background-color": "#f8f9fa"
 }
 
-# the styles for the main content position it to the right of the sidebar and
-# add some padding.
+# Style for the main content
 CONTENT_STYLE = {
-    "margin-left": "18rem",
+    "margin-left": "2rem",
     "margin-right": "2rem",
-    "padding": "2rem 1rem",
+    "padding": "2rem 1rem" 
 }
 
+# App Title
 title = html.Div(
     [
-        html.H1("Drag Racer Dashboard", className="display-4"),
+        html.H2("Drag Racer Dashboard", className="display-4"),
         html.Hr(),
     ],
     style={'padding': '2rem 1rem'}
 )
 
+# App Sidebar
 sidebar = html.Div(
     [                          
         html.P("Filters", className="lead"),
@@ -74,10 +108,61 @@ sidebar = html.Div(
     style=SIDEBAR_STYLE,
 )
 
+# App main panel 
+content = html.Div([
+    html.H4("Age Distribution"),
+    html.Iframe(id='plot1', style={'width': '70%', "height": "400px"}),
+    html.Br(),
+    html.H4("Astrology Sign Counts"),
+    html.Iframe(id='plot2', style={'width': '70%', "height": "350px"}),
+], style=CONTENT_STYLE)
 
-content = html.Div(style=CONTENT_STYLE)
+# App layout
+app.layout = html.Div([title,
+                       dbc.Row([dbc.Col([sidebar], md=3),
+                                dbc.Col([content], md=9)
+                                ])
+                    ])
 
-app.layout = html.Div([title, sidebar, content])
+# Update content based on user inputs
+@app.callback(
+    [Output('plot1', 'srcDoc'), Output('plot2', 'srcDoc')],
+    [Input('season', 'value'), Input('age', 'value')]
+)
+def update_plots(seasons, age_range):
+    # Filter data based on selected seasons
+    if seasons:
+        filtered_drag = drag[drag['season'].isin(seasons)]
+    else:
+        filtered_drag = drag
+
+    # Filter data based on selected age range
+    filtered_drag = filtered_drag[(filtered_drag['age'] >= age_range[0]) & (filtered_drag['age'] <= age_range[1])]
+
+    # Plot 1: Age distribution
+    df1 = filtered_drag.drop_duplicates(subset=['contestant'])
+    plot1 = alt.Chart(df1).mark_bar(color="#b19cd9").encode(
+        alt.X('age', bin=alt.Bin(maxbins=30), title="Age"),
+        alt.Y('count()', title="Count")
+    ).to_html()
+
+    # Plot 2: Astrology sign distribution
+    ## Convert the 'dob' column to datetime format
+    df2 = filtered_drag.drop_duplicates(subset=['contestant']).dropna(subset=['dob'])
+    df2['dob'] = pd.to_datetime(df2['dob'])
+
+    ## Create the 'astrology_sign' column using 'get_astrology_sign' function
+    df2['astrology_sign'] = df2['dob'].apply(get_astrology_sign)
+    df2 = df2.dropna(subset=['astrology_sign'])
+
+    plot2 = alt.Chart(df2).mark_bar(color="#b19cd9").encode(
+        alt.Y('astrology_sign', sort='-x', title="Sign"),
+        alt.X('count()', title="Count")
+    ).to_html()
+
+    # Return the plots
+    return plot1, plot2
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
