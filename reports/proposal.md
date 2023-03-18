@@ -34,3 +34,7 @@ Possible research questions that can be answered by this visualization are as fo
 ## Usage scenario
 
 James is a frequent watcher of RuPaul's Drag Race. He has seen every season of the American franchise, and he's interested in learning more about the backgrounds of the contestants that appear on the show. He's curious about the typical ages and astrological signs of the queens. Are they typically older or younger? Are there more Cancers or Leos? How have these numbers changed over the seasons? James wants to find answers to these pressing questions, but does not have time to do the required research. The visualization app dragracer-dash can help James with his problem. This app allows him to select any number of seasons and an age range that he is interested in. Based on his selections, one plot will show the age distribution of the filtered  queens, allowing him to see the most and least common ages, and a second plot will show the number of queens that fall into each astrological sign category. Now, James can get to know the stars of the show a little better.
+
+# Attribution
+
+This proposal is adapted from the `dragracerviz` [proposal](https://github.com/UBC-MDS/dragracerviz/blob/main/reports/proposal.md).
