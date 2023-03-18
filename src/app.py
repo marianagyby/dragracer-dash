@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 from dash import dash, html, dcc, Input, Output
 
 # read in data
-drag = pd.read_csv('data/drag.csv')
+drag = pd.read_csv('../data/drag.csv')
 
 # Function to extract astrology signs
 def get_astrology_sign(dob):
