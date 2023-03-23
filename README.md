@@ -16,7 +16,7 @@ When the user opens the app, they will see a short description of the app and th
 
 Based on these selections, the dashboard will display two updated plots. The first plot will show the age distribution of the queens in the selected seasons and age range. The plot will include a histogram to show the most and least common ages of the queens.
 
-The second plot will show the number of queens in each astrological sign category. This plot will be a bar chart that displays the frequency of each sign in the selected seasons and age range.
+The second plot will show the number of queens in each astrological sign category. This plot will be a bar chart that displays the frequency of each sign in the selected seasons and age range. The user can also hover over the bars or refer to the legend to see the queens that belong to each astrological sign category.
 
 The user can explore these visualizations with one or multiple seasons at a time!
 
