@@ -159,9 +159,19 @@ def update_plots(seasons, age_range):
     df2['astrology_sign'] = df2['dob'].apply(get_astrology_sign)
     df2 = df2.dropna(subset=['astrology_sign'])
 
-    plot2 = alt.Chart(df2).mark_bar(color="#b19cd9").encode(
+    # count by astrology sign
+    astro_counts = df2.groupby('astrology_sign').agg({'contestant': 'nunique'}).reset_index()
+    astro_counts = astro_counts.rename(columns={'contestant': 'count'})
+
+    contestant_names = df2[['astrology_sign', 'contestant']].groupby('astrology_sign')['contestant'].apply(list).reset_index()
+    contestant_names['contestant_names'] = contestant_names['contestant'].apply(lambda x: ', '.join(x))
+    astro_counts_names = astro_counts.merge(contestant_names[['astrology_sign', 'contestant_names', 'contestant']], on='astrology_sign')
+
+    plot2 = alt.Chart(astro_counts_names).mark_bar(color="#b19cd9").encode(
         alt.Y('astrology_sign', sort='-x', title="Sign"),
-        alt.X('count()', title="Count")
+        alt.X('count', title="Count"),
+        alt.Color("contestant", title="Queens", scale=alt.Scale(scheme='set3')),
+        tooltip="contestant_names"
     ).to_html()
 
     # Return the plots
